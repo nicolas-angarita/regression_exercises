@@ -45,7 +45,7 @@ def rename_columns(df):
     
     df = df.rename(columns={'bedroomcnt':'bedrooms', 
                    'bathroomcnt':'bathrooms',
-                   'calculatedfinishedsquarefeet':'sq_ft',
+                   'calculatedfinishedsquarefeet':'sqft',
                    'yearbuilt':'year_built',
                    'taxamount':'tax_amount',
                    'taxvaluedollarcnt':'tax_value'})
@@ -70,10 +70,10 @@ def clean_zillow_data(df):
 
 def wrangle_zillow():
 
-    filename = "zillow.csv"
+    file_name = "zillow.csv"
 
-    if os.path.isfile(filename):
-        df = pd.read_csv(filename)
+    if os.path.isfile(file_name):
+        df = pd.read_csv(file_name)
     else:
         df = get_zillow_data()
 
