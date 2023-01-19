@@ -13,7 +13,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, Qu
 
 
 def get_zillow_data():
-
+    
     '''
     This function is to get the zillow dataset from a local csv file or from SQL Ace to our working notebook to be able to
     use the data and perform various tasks using the data
@@ -27,14 +27,16 @@ def get_zillow_data():
        
         url = get_connection('zillow')
         
+        test = '%'
+        
         query = '''
         SELECT id, parcelid, bedroomcnt, bathroomcnt,
                calculatedfinishedsquarefeet, fips, 
                yearbuilt, taxamount, taxvaluedollarcnt 
         FROM properties_2017
         JOIN propertylandusetype USING(propertylandusetypeid)
-        WHERE propertylandusetypeid = 261; 
-        '''
+        WHERE propertylandusetypeid = 261;
+        ''' 
 
         df = pd.read_sql(query, url)
         
@@ -48,7 +50,7 @@ def rename_columns(df):
     
     df = df.rename(columns={'bedroomcnt':'bedrooms', 
                    'bathroomcnt':'bathrooms',
-                   'calculatedfinishedsquarefeet':'sqft',
+                   'calculatedfinishedsquarefeet':'sq_ft',
                    'yearbuilt':'year_built',
                    'taxamount':'tax_amount',
                    'taxvaluedollarcnt':'tax_value'})
@@ -119,17 +121,17 @@ def scaled_data(train,
     validate_scaled = validate.copy()
     test_scaled = test.copy()
     #     make the thing
-    scaler = StandardScaler()
+    mms = MinMaxScaler()
     #     fit the thing
-    scaler.fit(train[columns_to_scale])
+    mms.fit(train[columns_to_scale])
     # applying the scaler:
-    train_scaled[columns_to_scale] = pd.DataFrame(scaler.transform(train[columns_to_scale]),
+    train_scaled[columns_to_scale] = pd.DataFrame(mms.transform(train[columns_to_scale]),
                                                   columns=train[columns_to_scale].columns.values).set_index([train.index.values])
                                                   
-    validate_scaled[columns_to_scale] = pd.DataFrame(scaler.transform(validate[columns_to_scale]),
-                                                  columns=validate[columns_to_scale].columns.values).set_index([validate.index.values])
+    validate_scaled[columns_to_scale] = pd.DataFrame(mms.transform(validate[columns_to_scale]), 
+                                                     columns=validate[columns_to_scale].columns.values).set_index([validate.index.values])
     
-    test_scaled[columns_to_scale] = pd.DataFrame(scaler.transform(test[columns_to_scale]),
+    test_scaled[columns_to_scale] = pd.DataFrame(mms.transform(test[columns_to_scale]),
                                                  columns=test[columns_to_scale].columns.values).set_index([test.index.values])
     
     if return_scaler:
